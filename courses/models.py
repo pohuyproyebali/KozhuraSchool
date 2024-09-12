@@ -119,3 +119,21 @@ class ProgramUnit(models.Model):
 
     def __str__(self):
         return self.text
+
+class AnswerToText(models.Model):
+    """ Модель для выбора ответа у теста """
+    text = models.ForeignKey(to=TextToLesson, on_delete=models.CASCADE)
+    answer = models.TextField()
+    right = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.answer
+
+class AboutCourse(models.Model):
+    """ Модель для блоков о курсе """
+    block_name = models.CharField(max_length=100)
+    block_text = models.TextField()
+    course = models.ForeignKey(to=Course, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.block_name

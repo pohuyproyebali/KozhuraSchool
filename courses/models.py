@@ -1,6 +1,8 @@
 from django.db import models
 
+
 # Create your models here.
+
 
 class Company(models.Model):
     """ Модель для компаний """
@@ -12,6 +14,7 @@ class Company(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Course(models.Model):
     """ Модель для курсов """
@@ -25,6 +28,7 @@ class Course(models.Model):
     def __str__(self):
         return self.name
 
+
 class User(models.Model):
     """ Модель для пользователя """
     name = models.CharField(max_length=100)
@@ -34,6 +38,7 @@ class User(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Skill(models.Model):
     """ Модель для навыков получаемых в ходе прохождения курса """
@@ -45,13 +50,15 @@ class Skill(models.Model):
     def __str__(self):
         return self.name
 
+
 class Lesson(models.Model):
     """ Модель для уроков в конкретном курсе """
     name = models.CharField(max_length=100)
     course = models.ForeignKey(to=Course, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} {self.course}'
+
 
 class VideoToLesson(models.Model):
     """ Модель для видеоуроков """
@@ -62,6 +69,7 @@ class VideoToLesson(models.Model):
     def __str__(self):
         return self.name
 
+
 class TextToLesson(models.Model):
     """ Модель для текстовых уроков """
     lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE)
@@ -71,6 +79,7 @@ class TextToLesson(models.Model):
     def __str__(self):
         return self.name
 
+
 class ImageToTextLesson(models.Model):
     """ Модель для изображений в уроке """
     text_lesson = models.ForeignKey(to=TextToLesson, on_delete=models.CASCADE)
@@ -79,6 +88,7 @@ class ImageToTextLesson(models.Model):
     def __str__(self):
         return 'изображение для' + self.text_lesson.name
 
+
 class LessonToUser(models.Model):
     """ Модель для соединения уроков с пользователем и отметки выполнения """
     lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE)
@@ -86,7 +96,8 @@ class LessonToUser(models.Model):
     completed = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user.name + ' - ' + self.lesson.name + 'выполнено' if self.completed else 'не выполнено'
+        return f'{self.user.name} - {self.lesson}'
+
 
 class CourseToUser(models.Model):
     """ Модель для соединения различных курсов с конкретным пользователем """
@@ -96,13 +107,16 @@ class CourseToUser(models.Model):
     def __str__(self):
         return self.user.name + ' - ' + self.course.name
 
+
 class Speaker(models.Model):
     """ Модель для спикеров """
     name = models.CharField(max_length=100)
     profession = models.CharField(max_length=100)
     image = models.ImageField(upload_to='course_images/')
+
     def __str__(self):
         return self.name
+
 
 class SpeakerToCourse(models.Model):
     """ Модель для привязки различных спикеров к конкретному курсу """
@@ -111,6 +125,7 @@ class SpeakerToCourse(models.Model):
 
     def __str__(self):
         return self.speaker.name + ' - ' + self.course.name
+
 
 class ProgramUnit(models.Model):
     """ Модель для этапов программы конкретного курса """
@@ -121,6 +136,7 @@ class ProgramUnit(models.Model):
     def __str__(self):
         return self.text
 
+
 class AnswerToText(models.Model):
     """ Модель для выбора ответа у теста """
     text = models.ForeignKey(to=TextToLesson, on_delete=models.CASCADE)
@@ -129,6 +145,7 @@ class AnswerToText(models.Model):
 
     def __str__(self):
         return self.answer
+
 
 class AboutCourse(models.Model):
     """ Модель для блоков о курсе """

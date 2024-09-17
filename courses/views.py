@@ -1,10 +1,10 @@
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 
 from courses.models import Course, Company, User, CourseToUser, Lesson, LessonToUser
-from courses.serializers import CourseSerializer, CompanySerializer, UserSerializer
+from courses.serializers import CourseSerializer, CompanySerializer, UserSerializer, LessonToUserSerializer
 
 
 # Create your views here.
@@ -29,11 +29,21 @@ class CompanyViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+@api_view(['POST'])
+def register_user(request):
+    if request.method == 'POST':
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class UserViewSet(viewsets.ModelViewSet):
     """ Viewset для просмотра пользователей """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.AllowAny,)
 
     @action(detail=True)
     def user_courses(self, request, pk=None):
@@ -53,4 +63,13 @@ class UserViewSet(viewsets.ModelViewSet):
             ) for course in serializer
         ]
         return Response(serializer)
+
+    @action(detail=True, methods=['POST'])
+    def user_lessons(self, request, pk=None):
+        if request.method == 'POST':
+            serializer = LessonToUserSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

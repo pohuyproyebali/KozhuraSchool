@@ -1,8 +1,8 @@
 from django.db import models
+from django.contrib.auth.models import User, AbstractUser
 
 
 # Create your models here.
-
 
 class Company(models.Model):
     """ Модель для компаний """
@@ -29,15 +29,9 @@ class Course(models.Model):
         return self.name
 
 
-class User(models.Model):
+class User(AbstractUser):
     """ Модель для пользователя """
-    name = models.CharField(max_length=100)
-    email = models.EmailField()
     phone = models.CharField(max_length=100)
-    password = models.CharField(max_length=100, blank=True)
-
-    def __str__(self):
-        return self.name
 
 
 class Skill(models.Model):
@@ -93,10 +87,9 @@ class LessonToUser(models.Model):
     """ Модель для соединения уроков с пользователем и отметки выполнения """
     lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE)
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    completed = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.user.name} - {self.lesson}'
+        return f'{self.user.username} - {self.lesson}'
 
 
 class CourseToUser(models.Model):
@@ -105,7 +98,7 @@ class CourseToUser(models.Model):
     course = models.ForeignKey(to=Course, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user.name + ' - ' + self.course.name
+        return self.user.username + ' - ' + self.course.name
 
 
 class Speaker(models.Model):

@@ -56,7 +56,7 @@ class Lesson(models.Model):
 
 class VideoToLesson(models.Model):
     """ Модель для видеоуроков """
-    lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE, related_name='video_to_lesson')
     video = models.CharField(max_length=250)
     name = models.CharField(max_length=250)
 
@@ -66,7 +66,7 @@ class VideoToLesson(models.Model):
 
 class TextToLesson(models.Model):
     """ Модель для текстовых уроков """
-    lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE, related_name='text_to_lesson')
     text = models.TextField()
     name = models.CharField(max_length=250)
 
@@ -85,7 +85,7 @@ class ImageToTextLesson(models.Model):
 
 class LessonToUser(models.Model):
     """ Модель для соединения уроков с пользователем и отметки выполнения """
-    lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE, related_name='users_to_lesson')
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -116,6 +116,9 @@ class SpeakerToCourse(models.Model):
     """ Модель для привязки различных спикеров к конкретному курсу """
     speaker = models.ForeignKey(to=Speaker, on_delete=models.CASCADE)
     course = models.ForeignKey(to=Course, on_delete=models.CASCADE, related_name='speakers')
+
+    class Meta:
+        unique_together = (('speaker', 'course'),)
 
     def __str__(self):
         return self.speaker.name + ' - ' + self.course.name
@@ -154,7 +157,7 @@ class AboutCourse(models.Model):
 class SpeakerToLesson(models.Model):
     """ Модель для связки спикеров с уроками """
     speaker = models.ForeignKey(to=Speaker, on_delete=models.CASCADE)
-    lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE, related_name='speaker_to_lesson')
 
     def __str__(self):
         return f'{self.speaker.name} - {self.lesson}'

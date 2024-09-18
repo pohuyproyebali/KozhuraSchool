@@ -16,6 +16,12 @@ class CourseViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
+class LessonToUserViewSet(viewsets.ModelViewSet):
+    """ Viewset для просмотра и редактирования курсов.  """
+    queryset = LessonToUser.objects.all()
+    serializer_class = LessonToUserSerializer
+
+
 class CompanyViewSet(viewsets.ModelViewSet):
     """ Viewset для просмотра компаний """
     queryset = Company.objects.all()
@@ -64,12 +70,5 @@ class UserViewSet(viewsets.ModelViewSet):
         ]
         return Response(serializer)
 
-    @action(detail=True, methods=['POST'])
-    def user_lessons(self, request, pk=None):
-        if request.method == 'POST':
-            serializer = LessonToUserSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 

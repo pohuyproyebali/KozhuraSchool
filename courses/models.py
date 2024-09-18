@@ -39,7 +39,7 @@ class Skill(models.Model):
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to='course_images/')
     about = models.TextField()
-    course = models.ForeignKey(to=Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(to=Course, on_delete=models.CASCADE, related_name='skills_from_process')
 
     def __str__(self):
         return self.name
@@ -48,7 +48,7 @@ class Skill(models.Model):
 class Lesson(models.Model):
     """ Модель для уроков в конкретном курсе """
     name = models.CharField(max_length=100)
-    course = models.ForeignKey(to=Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(to=Course, on_delete=models.CASCADE, related_name='lessons')
 
     def __str__(self):
         return f'{self.name} {self.course}'
@@ -95,7 +95,7 @@ class LessonToUser(models.Model):
 class CourseToUser(models.Model):
     """ Модель для соединения различных курсов с конкретным пользователем """
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    course = models.ForeignKey(to=Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(to=Course, on_delete=models.CASCADE, related_name='users')
 
     def __str__(self):
         return self.user.username + ' - ' + self.course.name
@@ -115,7 +115,7 @@ class Speaker(models.Model):
 class SpeakerToCourse(models.Model):
     """ Модель для привязки различных спикеров к конкретному курсу """
     speaker = models.ForeignKey(to=Speaker, on_delete=models.CASCADE)
-    course = models.ForeignKey(to=Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(to=Course, on_delete=models.CASCADE, related_name='speakers')
 
     def __str__(self):
         return self.speaker.name + ' - ' + self.course.name
@@ -125,7 +125,7 @@ class ProgramUnit(models.Model):
     """ Модель для этапов программы конкретного курса """
     text = models.TextField()
     speaker = models.ForeignKey(to=Speaker, on_delete=models.CASCADE)
-    course = models.ForeignKey(to=Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(to=Course, on_delete=models.CASCADE, related_name='program_units')
 
     def __str__(self):
         return self.text
@@ -145,7 +145,18 @@ class AboutCourse(models.Model):
     """ Модель для блоков о курсе """
     block_name = models.CharField(max_length=100)
     block_text = models.TextField()
-    course = models.ForeignKey(to=Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(to=Course, on_delete=models.CASCADE, related_name='about_block')
 
     def __str__(self):
         return self.block_name
+
+
+class SpeakerToLesson(models.Model):
+    """ Модель для связки спикеров с уроками """
+    speaker = models.ForeignKey(to=Speaker, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.speaker.name} - {self.lesson}'
+
+

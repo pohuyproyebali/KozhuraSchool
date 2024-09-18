@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from courses.models import Course, Company, User, LessonToUser, Lesson
+from courses.models import Course, Company, User, LessonToUser, Lesson, Speaker
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -42,6 +42,14 @@ class LessonToUserSerializer(serializers.ModelSerializer):
     """ Сериализатор для модели уроков к пользователям """
     class Meta:
         model = LessonToUser
+        fields = '__all__'
+        depth = 2
+
+
+class SpeakerSerializer(serializers.ModelSerializer):
+    """ Сериализатор для модели спикеров """
+    class Meta:
+        model = Speaker
         fields = '__all__'
         depth = 2
 

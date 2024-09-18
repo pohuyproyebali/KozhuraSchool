@@ -106,9 +106,10 @@ class Speaker(models.Model):
     name = models.CharField(max_length=100)
     profession = models.CharField(max_length=100)
     image = models.ImageField(upload_to='course_images/')
+    on_main_page = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} - {self.profession}, отображение на гланой {self.on_main_page}'
 
 
 class SpeakerToCourse(models.Model):

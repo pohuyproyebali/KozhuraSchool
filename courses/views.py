@@ -3,8 +3,9 @@ from rest_framework.decorators import action, api_view
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 
-from courses.models import Course, Company, User, CourseToUser, Lesson, LessonToUser
-from courses.serializers import CourseSerializer, CompanySerializer, UserSerializer, LessonToUserSerializer
+from courses.models import Course, Company, User, CourseToUser, Lesson, LessonToUser, Speaker
+from courses.serializers import CourseSerializer, CompanySerializer, UserSerializer, LessonToUserSerializer, \
+    SpeakerSerializer
 
 
 # Create your views here.
@@ -71,4 +72,8 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer)
 
 
+class SpeakerViewSet(viewsets.ModelViewSet):
+    """ ViewSet для просмотра спикеров """
+    queryset = Speaker.objects.all()
+    serializer_class = SpeakerSerializer
 

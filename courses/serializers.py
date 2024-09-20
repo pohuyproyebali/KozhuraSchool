@@ -1,15 +1,30 @@
 from rest_framework import serializers
 
-from courses.models import Course, Company, User, LessonToUser, Lesson, Speaker
+from courses.models import Course, Company, User, LessonToUser, Lesson, Speaker, SpeakerToCourse
 
 
 class CourseSerializer(serializers.ModelSerializer):
     """ Сериализатор для модели курсов """
+    speakers = serializers.SerializerMethodField(method_name='get_speakers')
+
     class Meta:
         model = Course
-        fields = ['id', 'name', 'company', 'about', 'skills']
-        depth = 2
+        fields = [
+            'id',
+            'name',
+            'company',
+            'about',
+            'skills',
+            'speakers',
+            'program_units',
+            'about_block'
+        ]
+        depth = 4
         read_only_fields = ('id',)
+
+    def get_speakers(self, obj):
+        print(obj)
+        return Course.course_manager.speaker_of_this_course(obj.speakers.all())
 
 
 class CompanySerializer(serializers.ModelSerializer):

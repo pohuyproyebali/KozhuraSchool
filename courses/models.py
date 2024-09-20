@@ -10,10 +10,31 @@ class Company(models.Model):
     video_link = models.CharField(max_length=250)
     main_text = models.CharField(max_length=450)
     secondary_text = models.CharField(max_length=450)
-    logo = models.ImageField(upload_to='course_images/')
+    logo = models.ImageField(upload_to='course_images/', null=True, blank=True)
 
     def __str__(self):
         return self.name
+
+
+class CourseQueryset(models.QuerySet):
+    def speaker_of_this_course(self, speakers_to_course):
+        print(speakers_to_course)
+        speakers = {speaker.speaker.id: {
+            'name': speaker.speaker.name,
+            'profession': speaker.speaker.profession,
+            'image': speaker.speaker.image.url if speaker.speaker.image else None,
+        } for speaker in speakers_to_course}
+        print(speakers)
+        return speakers
+
+
+class CourseManager(models.Manager):
+    def get_queryset(self):
+        return CourseQueryset(self.model)
+
+    def speaker_of_this_course(self, speakers_to_course):
+        print(speakers_to_course)
+        return self.get_queryset().speaker_of_this_course(speakers_to_course)
 
 
 class Course(models.Model):
@@ -22,8 +43,11 @@ class Course(models.Model):
     company = models.ForeignKey(to=Company, on_delete=models.CASCADE)
     about = models.TextField()
     skills = models.TextField()
-    preview_image = models.ImageField(upload_to='course_images/')
-    image = models.ImageField(upload_to='course_images/')
+    preview_image = models.ImageField(upload_to='course_images/', blank=True)
+    image = models.ImageField(upload_to='course_images/', blank=True)
+
+    objects = models.Manager()
+    course_manager = CourseManager()
 
     def __str__(self):
         return self.name
@@ -37,7 +61,7 @@ class User(AbstractUser):
 class Skill(models.Model):
     """ Модель для навыков получаемых в ходе прохождения курса """
     name = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='course_images/')
+    image = models.ImageField(upload_to='course_images/', blank=True)
     about = models.TextField()
     course = models.ForeignKey(to=Course, on_delete=models.CASCADE, related_name='skills_from_process')
 
@@ -77,7 +101,7 @@ class TextToLesson(models.Model):
 class ImageToTextLesson(models.Model):
     """ Модель для изображений в уроке """
     text_lesson = models.ForeignKey(to=TextToLesson, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='course_images/')
+    image = models.ImageField(upload_to='course_images/', blank=True)
 
     def __str__(self):
         return 'изображение для' + self.text_lesson.name
@@ -105,7 +129,7 @@ class Speaker(models.Model):
     """ Модель для спикеров """
     name = models.CharField(max_length=100)
     profession = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='course_images/')
+    image = models.ImageField(upload_to='course_images/', blank=True)
     on_main_page = models.BooleanField(default=False)
 
     def __str__(self):
@@ -114,7 +138,7 @@ class Speaker(models.Model):
 
 class SpeakerToCourse(models.Model):
     """ Модель для привязки различных спикеров к конкретному курсу """
-    speaker = models.ForeignKey(to=Speaker, on_delete=models.CASCADE)
+    speaker = models.ForeignKey(to=Speaker, on_delete=models.CASCADE, related_name='courses')
     course = models.ForeignKey(to=Course, on_delete=models.CASCADE, related_name='speakers')
 
     class Meta:

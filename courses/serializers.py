@@ -8,6 +8,7 @@ class CourseSerializer(serializers.ModelSerializer):
     speakers = serializers.SerializerMethodField(method_name='get_speakers')
     program_units = serializers.SerializerMethodField(method_name='get_program_units')
     about_block = serializers.SerializerMethodField(method_name='get_about_block')
+    skills_from_process = serializers.SerializerMethodField(method_name='get_skills_from_process')
 
     class Meta:
         model = Course
@@ -19,7 +20,8 @@ class CourseSerializer(serializers.ModelSerializer):
             'skills',
             'speakers',
             'program_units',
-            'about_block'
+            'about_block',
+            'skills_from_process'
         ]
         depth = 4
         read_only_fields = ('id',)
@@ -32,6 +34,9 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_about_block(self, obj):
         return Course.course_manager.about_block_of_this_course(obj.about_block.all())
+
+    def get_skills_from_process(self, obj):
+        return Course.course_manager.skills_from_process_of_this_course(obj.skills_from_process.all())
 
 
 class CompanySerializer(serializers.ModelSerializer):

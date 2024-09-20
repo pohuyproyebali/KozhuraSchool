@@ -42,6 +42,17 @@ class CourseQueryset(models.QuerySet):
         }
         return about_blocks
 
+    def skills_from_process_of_this_course(self, skills_to_course):
+        skills = {
+            skill.id: {
+                'name': skill.name,
+                'image': skill.image.url if skill.image else None,
+                'about': skill.about
+            }
+            for skill in skills_to_course
+        }
+        return skills
+
 
 class CourseManager(models.Manager):
     def get_queryset(self):
@@ -55,6 +66,9 @@ class CourseManager(models.Manager):
 
     def about_block_of_this_course(self, about_blocks_to_course):
         return self.get_queryset().about_block_of_this_course(about_blocks_to_course)
+
+    def skills_from_process_of_this_course(self, skills_to_course):
+        return self.get_queryset().skills_from_process_of_this_course(skills_to_course)
 
 
 class Course(models.Model):

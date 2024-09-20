@@ -6,6 +6,8 @@ from courses.models import Course, Company, User, LessonToUser, Lesson, Speaker,
 class CourseSerializer(serializers.ModelSerializer):
     """ Сериализатор для модели курсов """
     speakers = serializers.SerializerMethodField(method_name='get_speakers')
+    program_units = serializers.SerializerMethodField(method_name='get_program_units')
+    about_block = serializers.SerializerMethodField(method_name='get_about_block')
 
     class Meta:
         model = Course
@@ -23,16 +25,29 @@ class CourseSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
     def get_speakers(self, obj):
-        print(obj)
         return Course.course_manager.speaker_of_this_course(obj.speakers.all())
+
+    def get_program_units(self, obj):
+        return Course.course_manager.program_units_of_this_course(obj.program_units.all())
+
+    def get_about_block(self, obj):
+        return Course.course_manager.about_block_of_this_course(obj.about_block.all())
 
 
 class CompanySerializer(serializers.ModelSerializer):
     """ Сериализатор для модели компаний """
     class Meta:
         model = Company
-        fields = '__all__'
-        depth = 2
+        fields = [
+            'id',
+            'name',
+            'video_link',
+            'main_text',
+            'secondary_text',
+            'logo',
+            'courses'
+        ]
+        depth = 1
         read_only_fields = ('id',)
 
 

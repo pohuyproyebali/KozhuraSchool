@@ -18,14 +18,29 @@ class Company(models.Model):
 
 class CourseQueryset(models.QuerySet):
     def speaker_of_this_course(self, speakers_to_course):
-        print(speakers_to_course)
-        speakers = {speaker.speaker.id: {
-            'name': speaker.speaker.name,
-            'profession': speaker.speaker.profession,
-            'image': speaker.speaker.image.url if speaker.speaker.image else None,
-        } for speaker in speakers_to_course}
-        print(speakers)
+        speakers = {
+            speaker.speaker.id: {
+                'name': speaker.speaker.name,
+                'profession': speaker.speaker.profession,
+                'image': speaker.speaker.image.url if speaker.speaker.image else None,
+            }
+            for speaker in speakers_to_course
+        }
         return speakers
+
+    def program_units_of_this_course(self, program_units_to_course):
+        units = {unit.id: unit.text for unit in program_units_to_course}
+        return units
+
+    def about_block_of_this_course(self, about_block_to_course):
+        about_blocks = {
+            block.id: {
+                'block_name': block.block_name,
+                'block_text': block.block_text,
+            }
+            for block in about_block_to_course
+        }
+        return about_blocks
 
 
 class CourseManager(models.Manager):
@@ -33,14 +48,19 @@ class CourseManager(models.Manager):
         return CourseQueryset(self.model)
 
     def speaker_of_this_course(self, speakers_to_course):
-        print(speakers_to_course)
         return self.get_queryset().speaker_of_this_course(speakers_to_course)
+
+    def program_units_of_this_course(self, program_units_to_course):
+        return self.get_queryset().program_units_of_this_course(program_units_to_course)
+
+    def about_block_of_this_course(self, about_blocks_to_course):
+        return self.get_queryset().about_block_of_this_course(about_blocks_to_course)
 
 
 class Course(models.Model):
     """ Модель для курсов """
     name = models.CharField(max_length=100)
-    company = models.ForeignKey(to=Company, on_delete=models.CASCADE)
+    company = models.ForeignKey(to=Company, on_delete=models.CASCADE, related_name='courses')
     about = models.TextField()
     skills = models.TextField()
     preview_image = models.ImageField(upload_to='course_images/', blank=True)
@@ -185,5 +205,3 @@ class SpeakerToLesson(models.Model):
 
     def __str__(self):
         return f'{self.speaker.name} - {self.lesson}'
-
-

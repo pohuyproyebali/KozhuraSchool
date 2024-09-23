@@ -9,11 +9,18 @@ from .admin_in_lines.lesson import *
 admin.site.register(Company)
 admin.site.register(User)
 admin.site.register(Speaker)
-admin.site.register(VideoToLesson)
-admin.site.register(ImageToTextLesson)
 admin.site.register(LessonToUser)
-admin.site.register(TextToLesson)
-admin.site.register(AnswerToText)
+
+
+@admin.register(TextToLesson)
+class TextToLessonAdmin(admin.ModelAdmin):
+    list_display = ('lesson', 'name')
+    list_filter = ('lesson',)
+    search_fields = ('name',)
+    inlines = [
+        AnswerToTextInline,
+        ImageToTextInline
+    ]
 
 
 @admin.register(Course)
@@ -64,7 +71,3 @@ class LessonAdmin(admin.ModelAdmin):
         TextToLessonInline,
         UsersToLessonInline
     ]
-
-
-
-

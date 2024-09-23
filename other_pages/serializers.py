@@ -23,6 +23,6 @@ class NewsSerializer(serializers.ModelSerializer):
         ]
 
     def get_images(self, obj):
-        return obj.images.all().value('url')
+        return obj.images.all().values('image')
 
 

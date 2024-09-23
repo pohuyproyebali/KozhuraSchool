@@ -41,6 +41,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
 class CompanySerializer(serializers.ModelSerializer):
     """ Сериализатор для модели компаний """
+
     class Meta:
         model = Company
         fields = [
@@ -58,6 +59,7 @@ class CompanySerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     """ Сериализатор для модели пользователя """
+
     class Meta:
         model = User
         fields = '__all__'
@@ -67,6 +69,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class LessonSerializer(serializers.ModelSerializer):
     """ Сериализатор для модели уроков """
+
     class Meta:
         model = Lesson
         fields = '__all__'
@@ -75,6 +78,7 @@ class LessonSerializer(serializers.ModelSerializer):
 
 class LessonToUserSerializer(serializers.ModelSerializer):
     """ Сериализатор для модели уроков к пользователям """
+
     class Meta:
         model = LessonToUser
         fields = '__all__'
@@ -83,10 +87,30 @@ class LessonToUserSerializer(serializers.ModelSerializer):
 
 class SpeakerSerializer(serializers.ModelSerializer):
     """ Сериализатор для модели спикеров """
+
     class Meta:
         model = Speaker
         fields = '__all__'
         depth = 2
 
 
+class LessonWithQuestionSerializer(serializers.ModelSerializer):
+    """ Сериализатор для уроков с вопросами """
+    text_to_lesson = serializers.SerializerMethodField(method_name='get_text_to_lesson')
+    video_to_lesson = serializers.SerializerMethodField(method_name='get_video_to_lesson')
 
+    class Meta:
+        model = Lesson
+        fields = [
+            'id',
+            'name',
+            'text_to_lesson',
+            'video_to_lesson',
+        ]
+        depth = 4
+
+    def get_text_to_lesson(self, obj):
+        return Lesson.lesson_manager.text_of_this_lesson(obj.text_to_lesson.all())
+
+    def get_video_to_lesson(self, obj):
+        return Lesson.lesson_manager.video_link_to_this_lesson(obj.video_to_lesson.all())

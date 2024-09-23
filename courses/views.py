@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from courses.models import Course, Company, User, CourseToUser, Lesson, LessonToUser, Speaker
 from courses.serializers import CourseSerializer, CompanySerializer, UserSerializer, LessonToUserSerializer, \
-    SpeakerSerializer
+    SpeakerSerializer, LessonSerializer, LessonWithQuestionSerializer
 
 
 # Create your views here.
@@ -15,6 +15,12 @@ class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    @action(detail=True)
+    def lessons(self, request, pk=None):
+        lessons = Lesson.objects.filter(course=pk)
+        serializer = LessonWithQuestionSerializer(lessons, many=True)
+        return Response(serializer.data)
 
 
 class LessonToUserViewSet(viewsets.ModelViewSet):
@@ -65,10 +71,20 @@ class UserViewSet(viewsets.ModelViewSet):
         response = [
             course.update(
                 {
-                    'passing percentage': f'{LessonToUser.objects.filter(user=pk, lesson__course=course['id']).count()} / {Lesson.objects.filter(course=course['id']).count()}',
+                    'passing percentage': f'{
+                    LessonToUser.objects.filter(user=pk, lesson__course=course['id']).count()
+                    } / {
+                    Lesson.objects.filter(course=course['id']).count()
+                    }',
                 }
             ) for course in serializer
         ]
+        return Response(serializer)
+
+    @action(detail=True)
+    def user_lessons(self, request, pk=None):
+        lessons = Lesson.objects.filter(users_to_lesson__user=pk)
+        serializer = LessonSerializer(lessons, many=True).data
         return Response(serializer)
 
 
@@ -76,4 +92,6 @@ class SpeakerViewSet(viewsets.ModelViewSet):
     """ ViewSet для просмотра спикеров """
     queryset = Speaker.objects.all()
     serializer_class = SpeakerSerializer
+
+
 

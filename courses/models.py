@@ -103,10 +103,48 @@ class Skill(models.Model):
         return self.name
 
 
+class LessonQueryset(models.QuerySet):
+    def text_of_this_lesson(self, text_to_this_lesson):
+        text = {
+            text_unit.id:
+                {
+                    "text": text_unit.text,
+                    "images": {
+                        "image": image.url for image in text_unit.image_to_text_lesson.all()
+                    },
+                    "answers": {
+                        answer.id: {
+                            "answer": answer.answer,
+                            "right": answer.right
+                        } for answer in text_unit.answer_to_text.all()
+                    }
+                } for text_unit in text_to_this_lesson
+        }
+        return text
+
+    def video_link_to_this_lesson(self, video_link_to_this_lesson):
+        units = {video.id: video.text for video in video_link_to_this_lesson}
+        return units
+
+
+class LessonManager(models.Manager):
+    def get_queryset(self):
+        return LessonQueryset(self.model)
+
+    def text_of_this_lesson(self, text_to_this_lesson):
+        return self.get_queryset().text_of_this_lesson(text_to_this_lesson)
+
+    def video_link_to_this_lesson(self, video_link_to_this_lesson):
+        return self.get_queryset().video_link_to_this_lesson(video_link_to_this_lesson)
+
+
 class Lesson(models.Model):
     """ Модель для уроков в конкретном курсе """
     name = models.CharField(max_length=100)
     course = models.ForeignKey(to=Course, on_delete=models.CASCADE, related_name='lessons')
+
+    objects = models.Manager()
+    lesson_manager = LessonManager()
 
     def __str__(self):
         return f'{self.name} {self.course}'
@@ -134,7 +172,7 @@ class TextToLesson(models.Model):
 
 class ImageToTextLesson(models.Model):
     """ Модель для изображений в уроке """
-    text_lesson = models.ForeignKey(to=TextToLesson, on_delete=models.CASCADE)
+    text_lesson = models.ForeignKey(to=TextToLesson, on_delete=models.CASCADE, related_name='image_to_text_lesson')
     image = models.ImageField(upload_to='course_images/', blank=True)
 
     def __str__(self):
@@ -144,7 +182,7 @@ class ImageToTextLesson(models.Model):
 class LessonToUser(models.Model):
     """ Модель для соединения уроков с пользователем и отметки выполнения """
     lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE, related_name='users_to_lesson')
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='lesson_to_user')
 
     def __str__(self):
         return f'{self.user.username} - {self.lesson}'
@@ -194,7 +232,7 @@ class ProgramUnit(models.Model):
 
 class AnswerToText(models.Model):
     """ Модель для выбора ответа у теста """
-    text = models.ForeignKey(to=TextToLesson, on_delete=models.CASCADE)
+    text = models.ForeignKey(to=TextToLesson, on_delete=models.CASCADE, related_name='answer_to_text')
     answer = models.TextField()
     right = models.BooleanField(default=False)
 

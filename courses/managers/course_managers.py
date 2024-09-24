@@ -14,7 +14,12 @@ class CourseQueryset(models.QuerySet):
         return speakers
 
     def program_units_of_this_course(self, program_units_to_course):
-        units = {unit.id: unit.text for unit in program_units_to_course}
+        units = {
+            unit.id:
+                {
+                    'text': unit.text,
+                    'speaker': unit.speaker.id,
+                } for unit in program_units_to_course}
         return units
 
     def about_block_of_this_course(self, about_block_to_course):
@@ -54,4 +59,3 @@ class CourseManager(models.Manager):
 
     def skills_from_process_of_this_course(self, skills_to_course):
         return self.get_queryset().skills_from_process_of_this_course(skills_to_course)
-

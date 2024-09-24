@@ -26,3 +26,17 @@ class NewsSerializer(serializers.ModelSerializer):
         return obj.images.all().values('image')
 
 
+class InformationSerializer(serializers.ModelSerializer):
+    """ Сериализатор для блоков информаации """
+    class Meta:
+        model = InformationBlock
+        fields = '__all__'
+        depth = 1
+
+
+class InnovationSerializer(serializers.ModelSerializer):
+    """ Сериализатор для блоков иноваций """
+    class Meta:
+        model = InnovationBlock
+        fields = '__all__'
+        depth = 1

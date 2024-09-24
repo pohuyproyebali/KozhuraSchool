@@ -15,7 +15,8 @@ admin.site.register(Speaker)
 class LessonToUserAdmin(admin.ModelAdmin):
     list_display = ('user', 'lesson__name', 'lesson__course')
     search_fields = ('user__username', 'lesson__name', 'lesson__course__name')
-    list_filter = ('lesson__course', 'lesson', 'user')
+    list_filter = ('lesson__course', 'lesson__name', 'user')
+
 
 @admin.register(TextToLesson)
 class TextToLessonAdmin(admin.ModelAdmin):
@@ -51,7 +52,8 @@ class CourseAdmin(admin.ModelAdmin):
         )
     )
 
-    list_filter = ('name', 'company', 'speakers')
+    list_filter = ('company__name', 'speakers__speaker__name')
+    search_fields = ('name', 'company__name', 'speakers__speaker__name')
 
     inlines = [
         SpeakerToCourseInline,

@@ -9,8 +9,13 @@ from .admin_in_lines.lesson import *
 admin.site.register(Company)
 admin.site.register(User)
 admin.site.register(Speaker)
-admin.site.register(LessonToUser)
 
+
+@admin.register(LessonToUser)
+class LessonToUserAdmin(admin.ModelAdmin):
+    list_display = ('user', 'lesson__name', 'lesson__course')
+    search_fields = ('user__username', 'lesson__name', 'lesson__course__name')
+    list_filter = ('lesson__course', 'lesson', 'user')
 
 @admin.register(TextToLesson)
 class TextToLessonAdmin(admin.ModelAdmin):

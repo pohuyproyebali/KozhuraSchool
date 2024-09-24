@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User, AbstractUser
 
+from courses.managers.course_managers import CourseManager
+from courses.managers.lesson_managers import LessonManager
+
 
 # Create your models here.
 
@@ -14,61 +17,6 @@ class Company(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class CourseQueryset(models.QuerySet):
-    def speaker_of_this_course(self, speakers_to_course):
-        speakers = {
-            speaker.speaker.id: {
-                'name': speaker.speaker.name,
-                'profession': speaker.speaker.profession,
-                'image': speaker.speaker.image.url if speaker.speaker.image else None,
-            }
-            for speaker in speakers_to_course
-        }
-        return speakers
-
-    def program_units_of_this_course(self, program_units_to_course):
-        units = {unit.id: unit.text for unit in program_units_to_course}
-        return units
-
-    def about_block_of_this_course(self, about_block_to_course):
-        about_blocks = {
-            block.id: {
-                'block_name': block.block_name,
-                'block_text': block.block_text,
-            }
-            for block in about_block_to_course
-        }
-        return about_blocks
-
-    def skills_from_process_of_this_course(self, skills_to_course):
-        skills = {
-            skill.id: {
-                'name': skill.name,
-                'image': skill.image.url if skill.image else None,
-                'about': skill.about
-            }
-            for skill in skills_to_course
-        }
-        return skills
-
-
-class CourseManager(models.Manager):
-    def get_queryset(self):
-        return CourseQueryset(self.model)
-
-    def speaker_of_this_course(self, speakers_to_course):
-        return self.get_queryset().speaker_of_this_course(speakers_to_course)
-
-    def program_units_of_this_course(self, program_units_to_course):
-        return self.get_queryset().program_units_of_this_course(program_units_to_course)
-
-    def about_block_of_this_course(self, about_blocks_to_course):
-        return self.get_queryset().about_block_of_this_course(about_blocks_to_course)
-
-    def skills_from_process_of_this_course(self, skills_to_course):
-        return self.get_queryset().skills_from_process_of_this_course(skills_to_course)
 
 
 class Course(models.Model):
@@ -101,41 +49,6 @@ class Skill(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class LessonQueryset(models.QuerySet):
-    def text_of_this_lesson(self, text_to_this_lesson):
-        text = {
-            text_unit.id:
-                {
-                    "text": text_unit.text,
-                    "images": {
-                        "image": image.url for image in text_unit.image_to_text_lesson.all()
-                    },
-                    "answers": {
-                        answer.id: {
-                            "answer": answer.answer,
-                            "right": answer.right
-                        } for answer in text_unit.answer_to_text.all()
-                    }
-                } for text_unit in text_to_this_lesson
-        }
-        return text
-
-    def video_link_to_this_lesson(self, video_link_to_this_lesson):
-        units = {video.id: video.text for video in video_link_to_this_lesson}
-        return units
-
-
-class LessonManager(models.Manager):
-    def get_queryset(self):
-        return LessonQueryset(self.model)
-
-    def text_of_this_lesson(self, text_to_this_lesson):
-        return self.get_queryset().text_of_this_lesson(text_to_this_lesson)
-
-    def video_link_to_this_lesson(self, video_link_to_this_lesson):
-        return self.get_queryset().video_link_to_this_lesson(video_link_to_this_lesson)
 
 
 class Lesson(models.Model):

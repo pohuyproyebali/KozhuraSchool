@@ -61,21 +61,22 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=True)
     def user_courses(self, request, pk=None):
         courses = [
-            Course.objects.filter(id=course_to_user.course.id) for course_to_user in CourseToUser.objects.filter(user=pk)
+            Course.objects.filter(id=course_to_user.course.id) for course_to_user in
+            CourseToUser.objects.filter(user=pk)
         ]
         courses_qs = courses[0]
         for course in courses[1:]:
             courses_qs = courses_qs.union(course)
 
         serializer = CourseSerializer(courses_qs, many=True).data
+
         response = [
             course.update(
                 {
-                    'passing percentage': f'{
-                    LessonToUser.objects.filter(user=pk, lesson__course=course['id']).count()
-                    } / {
-                    Lesson.objects.filter(course=course['id']).count()
-                    }',
+                    '{} / {}'.format(
+                        LessonToUser.objects.filter(user=pk, lesson__course=course['id']).count(),
+                        Lesson.objects.filter(course=course['id']).count()
+                    ),
                 }
             ) for course in serializer
         ]
@@ -92,6 +93,3 @@ class SpeakerViewSet(viewsets.ModelViewSet):
     """ ViewSet для просмотра спикеров """
     queryset = Speaker.objects.all()
     serializer_class = SpeakerSerializer
-
-
-

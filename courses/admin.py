@@ -13,7 +13,7 @@ admin.site.register(Speaker)
 
 @admin.register(LessonToUser)
 class LessonToUserAdmin(admin.ModelAdmin):
-    list_display = ('user', 'lesson__name', 'lesson__course')
+    list_display = ('user', 'lesson',)
     search_fields = ('user__username', 'lesson__name', 'lesson__course__name')
     list_filter = ('lesson__course', 'lesson__name', 'user')
 

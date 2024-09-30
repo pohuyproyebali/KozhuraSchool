@@ -41,12 +41,13 @@ class CourseAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             None,
-            {'fields': [('name', 'company')], }
+            {'fields': [('name', 'company'),
+                        ('code_name')], }
         ),
         (
             "Дополнительные настройки",
             {
-                'fields': [('skills', 'about'), ('preview_image', 'image')],
+                'fields': [('skills', 'about', 'about_on_library'), ('preview_image', 'image')],
                 'classes': ('collapse',)
             },
         )

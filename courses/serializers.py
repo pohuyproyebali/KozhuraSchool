@@ -15,8 +15,10 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'name',
+            'code_name',
             'company',
             'about',
+            'about_on_library',
             'skills',
             'speakers',
             'program_units',

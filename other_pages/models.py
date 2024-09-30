@@ -21,7 +21,7 @@ class NewsBlock(models.Model):
     news_date = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.news_title
+        return str(self.news_title)
 
 
 class NewsImage(models.Model):
@@ -29,7 +29,7 @@ class NewsImage(models.Model):
     image = models.ImageField(upload_to='', blank=True)
 
     def __str__(self):
-        return self.news
+        return self.news.news_title
 
 
 class InformationBlock(models.Model):

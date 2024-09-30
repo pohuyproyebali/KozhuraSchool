@@ -47,7 +47,8 @@ INSTALLED_APPS = [
 
     'courses',
     'rest_framework',
-    'other_pages'
+    'other_pages',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +59,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'KozhuraSchool.urls'
@@ -146,3 +149,10 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
     ]
 }
+
+CORS_ALLOWED_ORIGINS = [
+    'http://dev.kozhura.school',
+    'http://kozhura.school',
+    'https://kozhura.school',
+    'https://dev.kozhura.school',
+]

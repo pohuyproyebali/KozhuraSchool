@@ -157,5 +157,5 @@ CORS_ALLOWED_ORIGINS = [
     'https://dev.kozhura.school',
     'https://api.kozhura.school',
     'https://api.dew.kozhura.school',
-    'http://localhost:3000/'
+    'http://localhost:3000'
 ]

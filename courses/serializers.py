@@ -21,7 +21,8 @@ class CourseSerializer(serializers.ModelSerializer):
             'speakers',
             'program_units',
             'about_block',
-            'skills_from_process'
+            'skills_from_process',
+            'image'
         ]
         depth = 4
         read_only_fields = ('id',)

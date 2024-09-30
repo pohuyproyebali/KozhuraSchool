@@ -43,7 +43,7 @@ class InformationBlock(models.Model):
 class InnovationBlock(models.Model):
     innovation_name = models.CharField(max_length=150)
     innovation_image = models.ImageField(upload_to='', blank=True)
-    innovation_file = models.FileField(upload_to='', blank=True)
+    innovation_file = models.TextField()
 
     def __str__(self):
         return self.innovation_name

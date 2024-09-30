@@ -18,7 +18,7 @@ class CourseQueryset(models.QuerySet):
             unit.id:
                 {
                     'text': unit.text,
-                    'speaker': unit.speaker.id,
+                    'speaker': f"{unit.speaker.name} {unit.speaker.profession}"
                 } for unit in program_units_to_course}
         return units
 

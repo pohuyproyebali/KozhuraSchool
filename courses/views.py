@@ -93,3 +93,4 @@ class SpeakerViewSet(viewsets.ModelViewSet):
     """ ViewSet для просмотра спикеров """
     queryset = Speaker.objects.all()
     serializer_class = SpeakerSerializer
+    

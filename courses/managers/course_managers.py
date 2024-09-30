@@ -1,5 +1,8 @@
 from django.db import models
 
+from KozhuraSchool import settings
+
+source_url = settings.IMAGE_SOURCES_DIR
 
 class CourseQueryset(models.QuerySet):
     def speaker_of_this_course(self, speakers_to_course):
@@ -7,7 +10,7 @@ class CourseQueryset(models.QuerySet):
             speaker.speaker.id: {
                 'name': speaker.speaker.name,
                 'profession': speaker.speaker.profession,
-                'image': speaker.speaker.image.url if speaker.speaker.image else None,
+                'image': source_url + speaker.speaker.image.url if speaker.speaker.image else None,
             }
             for speaker in speakers_to_course
         }
@@ -18,7 +21,7 @@ class CourseQueryset(models.QuerySet):
             unit.id:
                 {
                     'text': unit.text,
-                    'speaker': f"{unit.speaker.name} {unit.speaker.profession}"
+                    'speaker': f"{unit.speaker.name}, {unit.speaker.profession}"
                 } for unit in program_units_to_course}
         return units
 
@@ -36,7 +39,7 @@ class CourseQueryset(models.QuerySet):
         skills = {
             skill.id: {
                 'name': skill.name,
-                'image': skill.image.url if skill.image else None,
+                'image': source_url + skill.image.url if skill.image else None,
                 'about': skill.about
             }
             for skill in skills_to_course

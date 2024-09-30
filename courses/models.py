@@ -22,8 +22,10 @@ class Company(models.Model):
 class Course(models.Model):
     """ Модель для курсов """
     name = models.CharField(max_length=100)
+    code_name = models.CharField(max_length=100)
     company = models.ForeignKey(to=Company, on_delete=models.CASCADE, related_name='courses')
     about = models.TextField()
+    about_on_library = models.TextField()
     skills = models.TextField()
     preview_image = models.ImageField(upload_to='course_images/', blank=True)
     image = models.ImageField(upload_to='course_images/', blank=True)

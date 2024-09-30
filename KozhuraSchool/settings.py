@@ -155,4 +155,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://kozhura.school',
     'https://kozhura.school',
     'https://dev.kozhura.school',
+    'https://api.kozhura.school',
+    'https://api.dew.kozhura.school',
 ]

@@ -29,6 +29,7 @@ class Course(models.Model):
     skills = models.TextField()
     preview_image = models.ImageField(upload_to='course_images/', blank=True)
     image = models.ImageField(upload_to='course_images/', blank=True)
+    pdf_link = models.URLField(blank=True, max_length=250)
 
     objects = models.Manager()
     course_manager = CourseManager()

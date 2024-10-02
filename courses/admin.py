@@ -42,7 +42,7 @@ class CourseAdmin(admin.ModelAdmin):
         (
             None,
             {'fields': [('name', 'company'),
-                        ('code_name')], }
+                        ('code_name', 'pdf_link')], }
         ),
         (
             "Дополнительные настройки",

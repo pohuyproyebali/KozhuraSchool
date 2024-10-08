@@ -19,6 +19,19 @@ class Company(models.Model):
         return self.name
 
 
+class User(AbstractUser):
+    """ Модель для пользователя """
+    phone = models.CharField(max_length=100)
+
+
+class UserGroup(models.Model):
+    name = models.CharField(max_length=100)
+    users = models.ManyToManyField(to=User, related_name='groups_to_courses')
+
+    def __str__(self):
+        return self.name
+
+
 class Course(models.Model):
     """ Модель для курсов """
     name = models.CharField(max_length=100)
@@ -30,17 +43,13 @@ class Course(models.Model):
     preview_image = models.ImageField(upload_to='course_images/', blank=True)
     image = models.ImageField(upload_to='course_images/', blank=True)
     pdf_link = models.URLField(blank=True, max_length=250)
+    user_groups = models.ManyToManyField(to=UserGroup, blank=True, related_name='courses')
 
     objects = models.Manager()
     course_manager = CourseManager()
 
     def __str__(self):
         return self.name
-
-
-class User(AbstractUser):
-    """ Модель для пользователя """
-    phone = models.CharField(max_length=100)
 
 
 class Skill(models.Model):

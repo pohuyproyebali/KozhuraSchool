@@ -1,4 +1,9 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.utils.translation import gettext_lazy as _
+
+
+from .admin_in_lines.user import UsersToGroupInline, CourseUserGroupInline
 from .models import *
 
 from .admin_in_lines.course import *
@@ -7,8 +12,52 @@ from .admin_in_lines.lesson import *
 # Register your models here.
 
 admin.site.register(Company)
-admin.site.register(User)
+#admin.site.register(User)
 admin.site.register(Speaker)
+
+
+@admin.register(User)
+class UserAdmin(UserAdmin):
+    fieldsets = (
+        (None, {"fields": ("username", "password")}),
+        (_("Personal info"), {"fields": ("first_name", "last_name", "email", "phone")}),
+        (
+            _("Permissions"),
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                ),
+            },
+        ),
+        (_("Important dates"), {"fields": ("last_login", "date_joined")}),
+    )
+    inlines = [
+        UsersToGroupInline,
+    ]
+
+
+@admin.register(UserGroup)
+class UserGroupAdmin(admin.ModelAdmin):
+    list_display = ('name', 'get_courses')
+    search_fields = (
+        'name',
+        'users__username',
+        'users__first_name',
+        'users__last_name',
+        'users__email',
+        'courses__name',
+    )
+    list_filter = ('users', 'courses')
+
+    def get_courses(self, obj):
+        return ', '.join(obj.courses.all().values_list('name', flat=True))
+    inlines = [
+        CourseUserGroupInline
+    ]
 
 
 @admin.register(LessonToUser)
@@ -42,7 +91,8 @@ class CourseAdmin(admin.ModelAdmin):
         (
             None,
             {'fields': [('name', 'company'),
-                        ('code_name', 'pdf_link')], }
+                        ('code_name', 'pdf_link'),
+                        'user_groups'], }
         ),
         (
             "Дополнительные настройки",

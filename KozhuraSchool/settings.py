@@ -172,8 +172,10 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 DJOSER = {
+    'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
         'user': 'courses.serializers.UserSerializer',
         'current_user': 'courses.serializers.UserSerializer',
+        'user_create': 'courses.serializers.UserSerializer',
     }
 }

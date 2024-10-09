@@ -2,6 +2,18 @@ from rest_framework import serializers
 
 from courses.models import Course, Company, User, LessonToUser, Lesson, Speaker, SpeakerToCourse
 
+from djoser.serializers import UserCreateSerializer as BaseUserRegistrationSerializer
+
+
+class UserCreateSerializer(BaseUserRegistrationSerializer):
+    class Meta(BaseUserRegistrationSerializer.Meta):
+        fields = (
+            'email',
+            'username',
+            'password',
+            'phone',
+        )
+
 
 class CourseSerializer(serializers.ModelSerializer):
     """ Сериализатор для модели курсов """
@@ -70,6 +82,8 @@ class UserSerializer(serializers.ModelSerializer):
         depth = 2
         read_only_fields = ('id',)
         ref_name = 'my_user'
+
+
 
 
 class LessonSerializer(serializers.ModelSerializer):

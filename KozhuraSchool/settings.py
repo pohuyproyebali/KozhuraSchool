@@ -170,3 +170,10 @@ CORS_ALLOWED_ORIGINS = [
     'https://api.dew.kozhura.school',
     'http://localhost:3000'
 ]
+
+DJOSER = {
+    'SERIALIZERS': {
+        'user': 'courses.serializers.UserSerializer',
+        'current_user': 'courses.serializers.UserSerializer',
+    }
+}

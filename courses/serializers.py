@@ -69,6 +69,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'
         depth = 2
         read_only_fields = ('id',)
+        ref_name = 'my_user'
 
 
 class LessonSerializer(serializers.ModelSerializer):

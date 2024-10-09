@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'djoser',
     'other_pages',
     'corsheaders',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [

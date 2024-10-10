@@ -63,8 +63,8 @@ class UserGroupAdmin(admin.ModelAdmin):
 @admin.register(LessonToUser)
 class LessonToUserAdmin(admin.ModelAdmin):
     list_display = ('user', 'lesson',)
-    search_fields = ('user__username', 'lesson__name', 'lesson__course__name')
-    list_filter = ('lesson__course', 'lesson__name', 'user')
+    search_fields = ('user__username', 'lesson__name', 'lesson__program_unit__name')
+    list_filter = ('lesson__program_unit__course', 'lesson__name', 'user')
 
 
 @admin.register(TextToLesson)
@@ -120,9 +120,9 @@ class CourseAdmin(admin.ModelAdmin):
 
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
-    field = [('name', 'course')]
-    list_display = ('name', 'course')
-    list_filter = ('name', 'course')
+    field = [('name', 'program_unit')]
+    list_display = ('name', 'program_unit')
+    list_filter = ('name', 'program_unit__course')
     inlines = [
         VideoToLessonInline,
         SpeakerToLessonInline,

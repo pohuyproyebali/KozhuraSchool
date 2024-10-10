@@ -1,14 +1,16 @@
+from django.contrib.auth import get_user_model
 from rest_framework.decorators import action, api_view
 
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 
-from courses.models import Course, Company, User, CourseToUser, Lesson, LessonToUser, Speaker
+from courses.models import Course, Company, CourseToUser, Lesson, LessonToUser, Speaker, UserGroup
 from courses.serializers import CourseSerializer, CompanySerializer, UserSerializer, LessonToUserSerializer, \
-    SpeakerSerializer, LessonSerializer, LessonWithQuestionSerializer
+    SpeakerSerializer, LessonSerializer, LessonWithQuestionSerializer, UserActualGroupSerializer
 
-
+User = get_user_model()
 # Create your views here.
+
 
 class CourseViewSet(viewsets.ModelViewSet):
     """ Viewset для просмотра и редактирования курсов.  """
@@ -80,6 +82,12 @@ class UserViewSet(viewsets.ModelViewSet):
                 }
             ) for course in serializer
         ]
+        return Response(serializer)
+
+    @action(detail=True)
+    def user_groups(self, request, pk=None):
+        groups = UserGroup.objects.filter(users__id=pk)
+        serializer = UserActualGroupSerializer(groups, many=True).data
         return Response(serializer)
 
     @action(detail=True)

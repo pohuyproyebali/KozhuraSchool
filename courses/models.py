@@ -1,8 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth.models import AbstractUser
 
 from courses.managers.course_managers import CourseManager
 from courses.managers.lesson_managers import LessonManager
+from courses.managers.my_user_managers import MyUserManager
 
 
 # Create your models here.
@@ -22,6 +23,9 @@ class Company(models.Model):
 class User(AbstractUser):
     """ Модель для пользователя """
     phone = models.CharField(max_length=100)
+
+    objects = models.Manager()
+    user_manager = MyUserManager()
 
 
 class UserGroup(models.Model):
@@ -61,56 +65,6 @@ class Skill(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class Lesson(models.Model):
-    """ Модель для уроков в конкретном курсе """
-    name = models.CharField(max_length=100)
-    course = models.ForeignKey(to=Course, on_delete=models.CASCADE, related_name='lessons')
-
-    objects = models.Manager()
-    lesson_manager = LessonManager()
-
-    def __str__(self):
-        return f'{self.name} {self.course}'
-
-
-class VideoToLesson(models.Model):
-    """ Модель для видеоуроков """
-    lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE, related_name='video_to_lesson')
-    video = models.CharField(max_length=250)
-    name = models.CharField(max_length=250)
-
-    def __str__(self):
-        return self.name
-
-
-class TextToLesson(models.Model):
-    """ Модель для текстовых уроков """
-    lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE, related_name='text_to_lesson')
-    text = models.TextField()
-    name = models.CharField(max_length=250)
-
-    def __str__(self):
-        return self.name
-
-
-class ImageToTextLesson(models.Model):
-    """ Модель для изображений в уроке """
-    text_lesson = models.ForeignKey(to=TextToLesson, on_delete=models.CASCADE, related_name='image_to_text_lesson')
-    image = models.ImageField(upload_to='course_images/', blank=True)
-
-    def __str__(self):
-        return 'изображение для' + self.text_lesson.name
-
-
-class LessonToUser(models.Model):
-    """ Модель для соединения уроков с пользователем и отметки выполнения """
-    lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE, related_name='users_to_lesson')
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='lesson_to_user')
-
-    def __str__(self):
-        return f'{self.user.username} - {self.lesson}'
 
 
 class CourseToUser(models.Model):
@@ -153,6 +107,55 @@ class ProgramUnit(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class Lesson(models.Model):
+    """ Модель для уроков в конкретном курсе """
+    name = models.CharField(max_length=100)
+    program_unit = models.ForeignKey(to=ProgramUnit, on_delete=models.CASCADE, related_name='lessons')
+    objects = models.Manager()
+    lesson_manager = LessonManager()
+
+    def __str__(self):
+        return f'{self.name} {self.program_unit}'
+
+
+class VideoToLesson(models.Model):
+    """ Модель для видеоуроков """
+    lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE, related_name='video_to_lesson')
+    video = models.CharField(max_length=250)
+    name = models.CharField(max_length=250)
+
+    def __str__(self):
+        return self.name
+
+
+class TextToLesson(models.Model):
+    """ Модель для текстовых уроков """
+    lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE, related_name='text_to_lesson')
+    text = models.TextField()
+    name = models.CharField(max_length=250)
+
+    def __str__(self):
+        return self.name
+
+
+class ImageToTextLesson(models.Model):
+    """ Модель для изображений в уроке """
+    text_lesson = models.ForeignKey(to=TextToLesson, on_delete=models.CASCADE, related_name='image_to_text_lesson')
+    image = models.ImageField(upload_to='course_images/', blank=True)
+
+    def __str__(self):
+        return 'изображение для' + self.text_lesson.name
+
+
+class LessonToUser(models.Model):
+    """ Модель для соединения уроков с пользователем и отметки выполнения """
+    lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE, related_name='users_to_lesson')
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='lesson_to_user')
+
+    def __str__(self):
+        return f'{self.user.username} - {self.lesson}'
 
 
 class AnswerToText(models.Model):

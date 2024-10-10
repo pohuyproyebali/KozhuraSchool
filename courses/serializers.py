@@ -1,8 +1,12 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from courses.models import Course, Company, User, LessonToUser, Lesson, Speaker, SpeakerToCourse
+from courses.models import Course, Company, LessonToUser, Lesson, Speaker, SpeakerToCourse, UserGroup
 
 from djoser.serializers import UserCreateSerializer as BaseUserRegistrationSerializer
+
+
+User = get_user_model()
 
 
 class UserCreateSerializer(BaseUserRegistrationSerializer):
@@ -83,8 +87,19 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
         ref_name = 'my_user'
 
+    def get_groups(self, obj):
+        return User.user_manager.available_courses(obj.groups.all())
 
 
+class UserActualGroupSerializer(serializers.ModelSerializer):
+    """ Сериализатор для модели UserGroup """
+    class Meta:
+        model = UserGroup
+        fields = [
+            'name',
+            'courses',
+        ]
+        depth = 0
 
 class LessonSerializer(serializers.ModelSerializer):
     """ Сериализатор для модели уроков """

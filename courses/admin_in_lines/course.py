@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from courses.models import AboutCourse, ProgramUnit, CourseToUser, Lesson, Skill, SpeakerToCourse
+from courses.models import AboutCourse, ProgramUnit, User, Lesson, Skill, SpeakerToCourse
 
 
 class SpeakerToCourseInline(admin.StackedInline):
@@ -20,13 +20,6 @@ class LessonToCourseInline(admin.StackedInline):
     model = Lesson
     classes = ['collapse']
     verbose_name_plural = 'Уроки данного курса'
-    extra = 1
-
-
-class UserToCourseInline(admin.StackedInline):
-    model = CourseToUser
-    classes = ['collapse']
-    verbose_name_plural = 'Ученики данного курса'
     extra = 1
 
 

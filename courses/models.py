@@ -22,7 +22,16 @@ class Company(models.Model):
 
 class User(AbstractUser):
     """ Модель для пользователя """
+    gender_choices = (('M', 'Male'), ('F', 'Female'))
     phone = models.CharField(max_length=100)
+    surname = models.CharField(max_length=100, null=True, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    gender = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+        choices=gender_choices,
+    )
 
     objects = models.Manager()
     user_manager = MyUserManager()
@@ -67,15 +76,6 @@ class Skill(models.Model):
         return self.name
 
 
-class CourseToUser(models.Model):
-    """ Модель для соединения различных курсов с конкретным пользователем """
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    course = models.ForeignKey(to=Course, on_delete=models.CASCADE, related_name='users')
-
-    def __str__(self):
-        return self.user.username + ' - ' + self.course.name
-
-
 class Speaker(models.Model):
     """ Модель для спикеров """
     name = models.CharField(max_length=100)
@@ -113,6 +113,7 @@ class Lesson(models.Model):
     """ Модель для уроков в конкретном курсе """
     name = models.CharField(max_length=100)
     program_unit = models.ForeignKey(to=ProgramUnit, on_delete=models.CASCADE, related_name='lessons')
+
     objects = models.Manager()
     lesson_manager = LessonManager()
 
@@ -153,6 +154,9 @@ class LessonToUser(models.Model):
     """ Модель для соединения уроков с пользователем и отметки выполнения """
     lesson = models.ForeignKey(to=Lesson, on_delete=models.CASCADE, related_name='users_to_lesson')
     user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='lesson_to_user')
+
+    class Meta:
+        unique_together = (('lesson', 'user'),)
 
     def __str__(self):
         return f'{self.user.username} - {self.lesson}'

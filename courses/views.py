@@ -4,11 +4,13 @@ from rest_framework.decorators import action, api_view
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 
-from courses.models import Course, Company, CourseToUser, Lesson, LessonToUser, Speaker, UserGroup
+from courses.models import Course, Company, Lesson, LessonToUser, Speaker, UserGroup
 from courses.serializers import CourseSerializer, CompanySerializer, UserSerializer, LessonToUserSerializer, \
     SpeakerSerializer, LessonSerializer, LessonWithQuestionSerializer, UserActualGroupSerializer
 
 User = get_user_model()
+
+
 # Create your views here.
 
 
@@ -61,30 +63,6 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
 
     @action(detail=True)
-    def user_courses(self, request, pk=None):
-        courses = [
-            Course.objects.filter(id=course_to_user.course.id) for course_to_user in
-            CourseToUser.objects.filter(user=pk)
-        ]
-        courses_qs = courses[0]
-        for course in courses[1:]:
-            courses_qs = courses_qs.union(course)
-
-        serializer = CourseSerializer(courses_qs, many=True).data
-
-        response = [
-            course.update(
-                {
-                    '{} / {}'.format(
-                        LessonToUser.objects.filter(user=pk, lesson__course=course['id']).count(),
-                        Lesson.objects.filter(course=course['id']).count()
-                    ),
-                }
-            ) for course in serializer
-        ]
-        return Response(serializer)
-
-    @action(detail=True)
     def user_groups(self, request, pk=None):
         groups = UserGroup.objects.filter(users__id=pk)
         serializer = UserActualGroupSerializer(groups, many=True).data
@@ -101,4 +79,3 @@ class SpeakerViewSet(viewsets.ModelViewSet):
     """ ViewSet для просмотра спикеров """
     queryset = Speaker.objects.all()
     serializer_class = SpeakerSerializer
-    

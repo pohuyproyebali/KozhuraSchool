@@ -79,16 +79,36 @@ class CompanySerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     """ Сериализатор для модели пользователя """
+    courses = serializers.SerializerMethodField(method_name='get_courses')
+    full_name = serializers.SerializerMethodField(method_name='get_full_name')
+    groups_to_courses = serializers.SerializerMethodField(method_name='get_groups_to_courses')
 
     class Meta:
         model = User
-        fields = '__all__'
-        depth = 2
+        fields = [
+            'pk',
+            'last_login',
+            'username',
+            'full_name',
+            'email',
+            'date_joined',
+            'phone',
+            'groups',
+            'courses',
+            'groups_to_courses'
+        ]
+        depth = 1
         read_only_fields = ('id',)
         ref_name = 'my_user'
 
-    def get_groups(self, obj):
-        return User.user_manager.available_courses(obj.groups.all())
+    def get_full_name(self, obj):
+        return obj.first_name + ' ' + obj.last_name
+
+    def get_courses(self, obj):
+        return User.user_manager.done_lessons(obj)
+
+    def get_groups_to_courses(self, obj):
+        return obj.groups_to_courses.all().values('pk', 'name')
 
 
 class UserActualGroupSerializer(serializers.ModelSerializer):

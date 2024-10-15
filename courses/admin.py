@@ -20,7 +20,7 @@ admin.site.register(Speaker)
 class UserAdmin(UserAdmin):
     fieldsets = (
         (None, {"fields": ("username", "password")}),
-        (_("Personal info"), {"fields": ("first_name", "last_name", "email", "phone")}),
+        (_("Personal info"), {"fields": ("first_name", "last_name", "email", "phone", "gender")}),
         (
             _("Permissions"),
             {
@@ -108,7 +108,6 @@ class CourseAdmin(admin.ModelAdmin):
 
     inlines = [
         SpeakerToCourseInline,
-        UserToCourseInline,
         ProgramUnitToCourseInline,
         AboutCourseToCourseInline,
         SkillToCourseInline

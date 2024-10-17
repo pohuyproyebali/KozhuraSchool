@@ -22,6 +22,7 @@ class Company(models.Model):
 
 class User(AbstractUser):
     """ Модель для пользователя """
+    email = models.EmailField("email address", blank=True, unique=True)
     gender_choices = (('M', 'Male'), ('F', 'Female'))
     phone = models.CharField(max_length=100)
     surname = models.CharField(max_length=100, null=True, blank=True)
@@ -33,7 +34,11 @@ class User(AbstractUser):
         choices=gender_choices,
     )
 
-    objects = models.Manager()
+    USERNAME_FIELD = 'email'
+    EMAIL_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    objects = MyUserManager()
     user_manager = MyUserManager()
 
 
